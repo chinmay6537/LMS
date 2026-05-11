@@ -296,6 +296,24 @@ library-management-system/
 
 ---
 
+# ⚠️ Requirements
+
+Before running the project, make sure the following are installed and running:
+
+* Node.js
+* MySQL Server
+* npm
+
+You can use:
+
+* XAMPP (MySQL only)
+* MAMP
+* Native MySQL installation
+
+> Apache or PHP is NOT required because the project uses Node.js + Express as the backend server.
+
+---
+
 # ⚙️ Installation & Setup
 
 ## 1. Clone Repository
@@ -422,8 +440,8 @@ Through this project, the following concepts were learned and implemented:
 
 # 👨‍💻 Developed By
 
-Atharva SM
-Chandra Sriyanth
+Atharva SM 
+Chandra Sriyanth 
 Chinmay S
 
 RV University
