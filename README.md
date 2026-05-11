@@ -16,7 +16,6 @@ A full-stack web application for managing the RV University library. Built with 
 8. [Running the App](#running-the-app)
 9. [Routes Reference](#routes-reference)
 10. [UI Theme](#ui-theme)
-11. [Known Issues & Improvements](#known-issues--improvements)
 
 ---
 
@@ -319,41 +318,6 @@ The interface is themed around **RV University's visual identity**:
 - Status badges: Available / Low Stock / Out of Stock for books; Returned / Issued for history
 - Overdue rows highlighted in red with estimated fine shown inline on the Return page
 - Avatar initials auto-generated from student names
-
----
-
-## Known Issues & Improvements
-
-The following issues exist in the current codebase and should be addressed before deploying to production:
-
-### Security
-
-**SQL Injection** — Search queries in `books.js` and `students.js` use raw string interpolation instead of parameterized queries. Any user-supplied search input is directly embedded in SQL.
-
-```javascript
-// Current (vulnerable):
-sql = `SELECT * FROM books WHERE title LIKE '%${req.query.search}%'`
-
-// Fix:
-db.query('SELECT * FROM books WHERE title LIKE ?', [`%${search}%`], ...)
-```
-
-**Plain-text passwords** — Passwords in the `admins` table are stored and compared as plain text. Use `bcrypt` to hash passwords before storing and compare hashes on login.
-
-**Missing auth guards** — `/fines` and `/history` routes do not check `req.session.admin`. Add the guard at the top of each route handler.
-
-### Logic
-
-**Book update doesn't sync `available`** — When a book's `quantity` is edited, the `available` count is not recalculated. If a librarian increases quantity from 5 to 10, `available` stays unchanged.
-
-**Return uses GET for a state-changing action** — `/return-book/:id` performs database writes (sets return date, updates availability, inserts fine) over a GET request. This should be a POST request to follow HTTP semantics and prevent accidental re-triggers.
-
-**No duplicate issue check** — A student can be issued the same book multiple times simultaneously. Add a check before inserting into `issued_books`.
-
-### Missing Files
-
-- `db/db.js` — Not included in the repository. See [Environment Setup](#environment-setup) above to create it.
-- `package.json` — Not present. Run `npm init` and install dependencies manually as described in [Getting Started](#getting-started).
 
 ---
 
