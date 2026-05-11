@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Return Book — RV University Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <%- include('_layout') %>
+  <style>
+    .overdue-row { background: #fff9f9 !important; }
+    .overdue-row:hover { background: #fef2f2 !important; }
+  </style>
+</head>
+<body>
+  <%- include('_sidebar', {active:'return'}) %>
+
+  <div class="main">
+    <header class="topbar">
+      <span class="topbar-title">Return Book</span>
+      <div class="topbar-right">
+        <div class="admin-badge"><span class="admin-dot"></span><span>Admin</span></div>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <div class="card">
+        <div class="card-header">
+          <h2>Currently Issued Books <span style="font-weight:400;color:var(--rv-gray-400);font-size:13px;margin-left:8px;"><%= issuedBooks.length %> records</span></h2>
+          <span style="font-size:12px;color:var(--rv-gray-400);">Fine: ₹2 per overdue day</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Book</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% issuedBooks.forEach((book, i) => {
+                const today = new Date();
+                const due = new Date(book.due_date);
+                const isOverdue = today > due;
+                const diffDays = isOverdue ? Math.ceil((today - due) / (1000*60*60*24)) : 0;
+              %>
+              <tr class="<%= isOverdue ? 'overdue-row' : '' %>">
+                <td class="td-muted"><%= i + 1 %></td>
+                <td style="font-weight:500;"><%= book.student_name %></td>
+                <td><%= book.book_title %></td>
+                <td class="td-muted"><%= new Date(book.issue_date).toLocaleDateString('en-IN') %></td>
+                <td class="<%= isOverdue ? '' : 'td-muted' %>" style="<%= isOverdue ? 'color:#dc2626;font-weight:600;' : '' %>">
+                  <%= new Date(book.due_date).toLocaleDateString('en-IN') %>
+                </td>
+                <td>
+                  <% if(isOverdue){ %>
+                    <span class="badge badge-danger">Overdue <%= diffDays %>d · ₹<%= diffDays * 2 %></span>
+                  <% } else { %>
+                    <span class="badge badge-success">On Time</span>
+                  <% } %>
+                </td>
+                <td>
+                  <a href="/return-book/<%= book.id %>" class="btn btn-success btn-sm" onclick="return confirm('Process return for this book?')">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+                    Return
+                  </a>
+                </td>
+              </tr>
+              <% }) %>
+              <% if(issuedBooks.length === 0){ %>
+              <tr><td colspan="7" style="text-align:center;padding:48px;color:var(--rv-gray-400);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 12px;opacity:0.3;"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+                All books have been returned.
+              </td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

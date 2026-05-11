@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue Book — RV University Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <%- include('_layout') %>
+</head>
+<body>
+  <%- include('_sidebar', {active:'issue'}) %>
+
+  <div class="main">
+    <header class="topbar">
+      <span class="topbar-title">Issue Book</span>
+      <div class="topbar-right">
+        <div class="admin-badge"><span class="admin-dot"></span><span>Admin</span></div>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <% if(success && success.length > 0){ %>
+        <div class="alert alert-success">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <%= success %>
+        </div>
+      <% } %>
+
+      <div style="max-width:600px;">
+        <div class="card">
+          <div class="card-header">
+            <h2>Issue a Book to Student</h2>
+          </div>
+          <div class="card-body">
+            <form action="/issue-book" method="POST">
+              <div class="form-group">
+                <label class="form-label">Student</label>
+                <select class="form-control" name="student_id" required>
+                  <option value="">Select a student…</option>
+                  <% students.forEach(student => { %>
+                    <option value="<%= student.id %>"><%= student.name %> — <%= student.usn %> (<%= student.department %>)</option>
+                  <% }) %>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Book</label>
+                <select class="form-control" name="book_id" required>
+                  <option value="">Select a book…</option>
+                  <% books.forEach(book => { %>
+                    <option value="<%= book.id %>"><%= book.title %> by <%= book.author %> — <%= book.available %> available</option>
+                  <% }) %>
+                </select>
+              </div>
+
+              <div class="form-row cols-2">
+                <div class="form-group">
+                  <label class="form-label">Issue Date</label>
+                  <input class="form-control" type="date" name="issue_date" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Due Date</label>
+                  <input class="form-control" type="date" name="due_date" required>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px;margin-top:4px;">
+                <button class="btn btn-primary" type="submit" style="flex:1;justify-content:center;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                  Issue Book
+                </button>
+                <a href="/dashboard" class="btn btn-ghost">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Info box -->
+        <div style="margin-top:16px;padding:14px 16px;border-radius:10px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);font-size:13px;color:var(--rv-gray-600);display:flex;gap:10px;align-items:flex-start;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--rv-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Only books with available copies are shown. A fine of ₹2/day is charged for overdue returns.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

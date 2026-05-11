@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Students — RV University Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <%- include('_layout') %>
+</head>
+<body>
+  <%- include('_sidebar', {active:'students'}) %>
+
+  <div class="main">
+    <header class="topbar">
+      <span class="topbar-title">Students</span>
+      <div class="topbar-right">
+        <div class="admin-badge"><span class="admin-dot"></span><span>Admin</span></div>
+      </div>
+    </header>
+
+    <div class="page-body">
+
+      <!-- Add Student Panel -->
+      <div class="add-panel">
+        <div class="add-panel-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Enroll New Student
+        </div>
+        <form action="/students/add" method="POST">
+          <div class="form-row cols-5">
+            <div>
+              <label class="form-label">Full Name</label>
+              <input class="form-control" type="text" name="name" placeholder="Student name" required>
+            </div>
+            <div>
+              <label class="form-label">USN</label>
+              <input class="form-control" type="text" name="usn" placeholder="e.g. 1RV22CS001" required>
+            </div>
+            <div>
+              <label class="form-label">Department</label>
+              <input class="form-control" type="text" name="department" placeholder="e.g. CSE" required>
+            </div>
+            <div>
+              <label class="form-label">Phone</label>
+              <input class="form-control" type="text" name="phone" placeholder="+91 XXXXX XXXXX" required>
+            </div>
+            <div style="display:flex;align-items:flex-end;">
+              <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;">Add Student</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Students Table -->
+      <div class="card">
+        <div class="card-header">
+          <h2>All Students <span style="font-weight:400;color:var(--rv-gray-400);font-size:13px;margin-left:8px;"><%= students.length %> enrolled</span></h2>
+          <form action="/students" method="GET" class="search-bar">
+            <div class="search-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="form-control" type="text" name="search" placeholder="Search name, USN, department…" style="min-width:240px;">
+            </div>
+            <button class="btn btn-ghost" type="submit">Search</button>
+          </form>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>USN</th>
+                <th>Department</th>
+                <th>Phone</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% students.forEach((student, i) => { %>
+              <tr>
+                <td class="td-muted"><%= i + 1 %></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--rv-maroon),#a02a2a);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:600;flex-shrink:0;">
+                      <%= student.name.charAt(0).toUpperCase() %>
+                    </div>
+                    <span style="font-weight:500;"><%= student.name %></span>
+                  </div>
+                </td>
+                <td><code style="font-size:12px;background:var(--rv-gray-100);padding:2px 7px;border-radius:5px;"><%= student.usn %></code></td>
+                <td>
+                  <span style="background:rgba(201,168,76,0.15);color:#7a5e1a;padding:3px 9px;border-radius:6px;font-size:12px;font-weight:500;">
+                    <%= student.department %>
+                  </span>
+                </td>
+                <td class="td-muted"><%= student.phone %></td>
+                <td>
+                  <div style="display:flex;gap:6px;">
+                    <a href="/students/edit/<%= student.id %>" class="btn btn-gold btn-sm">Edit</a>
+                    <a href="/students/delete/<%= student.id %>" class="btn btn-danger btn-sm" onclick="return confirm('Remove this student?')">Delete</a>
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
+              <% if(students.length === 0){ %>
+              <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--rv-gray-400);">No students found.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Books — RV University Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <%- include('_layout') %>
+</head>
+<body>
+  <%- include('_sidebar', {active:'books'}) %>
+
+  <div class="main">
+    <header class="topbar">
+      <span class="topbar-title">Books</span>
+      <div class="topbar-right">
+        <div class="admin-badge"><span class="admin-dot"></span><span>Admin</span></div>
+      </div>
+    </header>
+
+    <div class="page-body">
+
+      <% if(success.length > 0){ %>
+        <div class="alert alert-success">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <%= success %>
+        </div>
+      <% } %>
+
+      <!-- Add Book Panel -->
+      <div class="add-panel">
+        <div class="add-panel-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add New Book
+        </div>
+        <form action="/books/add" method="POST">
+          <div class="form-row cols-5">
+            <div>
+              <label class="form-label">Title</label>
+              <input class="form-control" type="text" name="title" placeholder="Book title" required>
+            </div>
+            <div>
+              <label class="form-label">Author</label>
+              <input class="form-control" type="text" name="author" placeholder="Author name" required>
+            </div>
+            <div>
+              <label class="form-label">Category</label>
+              <input class="form-control" type="text" name="category" placeholder="e.g. DBMS" required>
+            </div>
+            <div>
+              <label class="form-label">Quantity</label>
+              <input class="form-control" type="number" name="quantity" placeholder="0" min="1" required>
+            </div>
+            <div style="display:flex;align-items:flex-end;">
+              <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;">Add Book</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Books Table -->
+      <div class="card">
+        <div class="card-header">
+          <h2>All Books <span style="font-weight:400;color:var(--rv-gray-400);font-size:13px;margin-left:8px;"><%= books.length %> titles</span></h2>
+          <form action="/books" method="GET" class="search-bar">
+            <div class="search-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="form-control" type="text" name="search" placeholder="Search title, author, category…" value="<%= typeof query !== 'undefined' ? query : '' %>" style="min-width:240px;">
+            </div>
+            <button class="btn btn-ghost" type="submit">Search</button>
+            <% if(typeof query !== 'undefined' && query) { %>
+              <a href="/books" class="btn btn-ghost">Clear</a>
+            <% } %>
+          </form>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Available</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% books.forEach((book, i) => { %>
+              <tr>
+                <td class="td-muted"><%= i + 1 %></td>
+                <td style="font-weight:500;max-width:200px;"><%= book.title %></td>
+                <td class="td-muted"><%= book.author %></td>
+                <td>
+                  <span style="background:rgba(123,28,28,0.08);color:var(--rv-maroon);padding:3px 9px;border-radius:6px;font-size:12px;font-weight:500;">
+                    <%= book.category %>
+                  </span>
+                </td>
+                <td><%= book.quantity %></td>
+                <td><strong><%= book.available %></strong></td>
+                <td>
+                  <% if(book.available === 0){ %>
+                    <span class="badge badge-danger">Out of Stock</span>
+                  <% } else if(book.available < book.quantity * 0.3){ %>
+                    <span class="badge badge-warning">Low Stock</span>
+                  <% } else { %>
+                    <span class="badge badge-success">Available</span>
+                  <% } %>
+                </td>
+                <td>
+                  <div style="display:flex;gap:6px;">
+                    <a href="/books/edit/<%= book.id %>" class="btn btn-gold btn-sm">Edit</a>
+                    <a href="/books/delete/<%= book.id %>" class="btn btn-danger btn-sm" onclick="return confirm('Delete this book?')">Delete</a>
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
+              <% if(books.length === 0){ %>
+              <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--rv-gray-400);">No books found.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

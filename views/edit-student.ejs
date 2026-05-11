@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Student — RV University Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <%- include('_layout') %>
+</head>
+<body>
+  <%- include('_sidebar', {active:'students'}) %>
+
+  <div class="main">
+    <header class="topbar">
+      <span class="topbar-title">Edit Student</span>
+      <div class="topbar-right">
+        <div class="admin-badge"><span class="admin-dot"></span><span>Admin</span></div>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <a href="/students" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Students
+      </a>
+
+      <div style="max-width:520px;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Edit Student Details</h2>
+              <div style="font-size:12px;color:var(--rv-gray-400);margin-top:2px;"><%= student.usn %></div>
+            </div>
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--rv-maroon),#a02a2a);display:flex;align-items:center;justify-content:center;color:white;font-size:15px;font-weight:700;">
+              <%= student.name.charAt(0).toUpperCase() %>
+            </div>
+          </div>
+          <div class="card-body">
+            <form action="/students/update/<%= student.id %>" method="POST">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input class="form-control" type="text" name="name" value="<%= student.name %>" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">USN</label>
+                <input class="form-control" type="text" name="usn" value="<%= student.usn %>" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Department</label>
+                <input class="form-control" type="text" name="department" value="<%= student.department %>" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input class="form-control" type="text" name="phone" value="<%= student.phone %>" required>
+              </div>
+
+              <div style="display:flex;gap:10px;margin-top:20px;">
+                <button class="btn btn-primary" type="submit" style="flex:1;justify-content:center;">Save Changes</button>
+                <a href="/students" class="btn btn-ghost">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

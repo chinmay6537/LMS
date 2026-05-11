@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History — RV University Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <%- include('_layout') %>
+</head>
+<body>
+  <%- include('_sidebar', {active:'history'}) %>
+
+  <div class="main">
+    <header class="topbar">
+      <span class="topbar-title">Issue History</span>
+      <div class="topbar-right">
+        <div class="admin-badge"><span class="admin-dot"></span><span>Admin</span></div>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <div class="card">
+        <div class="card-header">
+          <h2>All Transactions <span style="font-weight:400;color:var(--rv-gray-400);font-size:13px;margin-left:8px;"><%= history.length %> records</span></h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>USN</th>
+                <th>Book</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% history.forEach((record, i) => { %>
+              <tr>
+                <td class="td-muted"><%= i + 1 %></td>
+                <td style="font-weight:500;"><%= record.student_name %></td>
+                <td><code style="font-size:12px;background:var(--rv-gray-100);padding:2px 7px;border-radius:5px;"><%= record.usn %></code></td>
+                <td style="max-width:180px;"><%= record.book_title %></td>
+                <td class="td-muted"><%= new Date(record.issue_date).toLocaleDateString('en-IN') %></td>
+                <td class="td-muted"><%= new Date(record.due_date).toLocaleDateString('en-IN') %></td>
+                <td class="td-muted">
+                  <% if(record.return_date){ %>
+                    <%= new Date(record.return_date).toLocaleDateString('en-IN') %>
+                  <% } else { %>
+                    <span style="color:var(--rv-gray-400);font-style:italic;">—</span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if(record.return_date){ %>
+                    <span class="badge badge-success">Returned</span>
+                  <% } else { %>
+                    <span class="badge badge-warning">Issued</span>
+                  <% } %>
+                </td>
+              </tr>
+              <% }) %>
+              <% if(history.length === 0){ %>
+              <tr><td colspan="8" style="text-align:center;padding:48px;color:var(--rv-gray-400);">No transaction history yet.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
