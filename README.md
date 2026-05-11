@@ -1,338 +1,222 @@
-# 📚 Library Management System
+# RV University — Library Management System
 
-A modern full-stack Library Management System developed using **Node.js, Express.js, MySQL, EJS, Bootstrap, and Chart.js** for efficient management of books, students, library circulation, fines, and analytics.
-
-This project was developed as a **DBMS Mini Project** for academic purposes and demonstrates practical implementation of important Database Management System concepts such as:
-
-* CRUD Operations
-* Relational Databases
-* Foreign Keys
-* Transactions
-* Constraints
-* Referential Integrity
-* Data Validation
-* Session Management
-* Reporting & Analytics
+A full-stack web application for managing the RV University library. Built with **Node.js**, **Express**, **MySQL**, and **EJS** templates, featuring a modern admin dashboard themed with RV University's maroon and gold identity.
 
 ---
 
-# 🚀 Features
+## Table of Contents
 
-## 🔐 Authentication System
-
-* Admin login system
-* Session-based authentication
-* Protected routes
-* Secure admin dashboard access
-
----
-
-## 📖 Book Management
-
-* Add new books
-* Edit book details
-* Delete books
-* Search books
-* Track quantity and availability
-* Prevent deletion of books with issue history
-
-### Book Details Stored
-
-* Title
-* Author
-* Category
-* Quantity
-* Available Copies
+1. [Project Overview](#project-overview)
+2. [Tech Stack](#tech-stack)
+3. [Features](#features)
+4. [Project Structure](#project-structure)
+5. [Database Schema](#database-schema)
+6. [Getting Started](#getting-started)
+7. [Environment Setup](#environment-setup)
+8. [Running the App](#running-the-app)
+9. [Routes Reference](#routes-reference)
+10. [UI Theme](#ui-theme)
+11. [Known Issues & Improvements](#known-issues--improvements)
 
 ---
 
-## 👨‍🎓 Student Management
+## Project Overview
 
-* Add students
-* Edit student information
-* Delete students
-* Search students
-* Unique USN validation
+The RV University Library Management System (LMS) is a web-based admin portal that allows library staff to:
 
-### Student Details Stored
+- Manage the book catalogue (add, edit, delete, search)
+- Manage enrolled students (add, edit, delete, search)
+- Issue books to students with issue and due dates
+- Process book returns and automatically calculate overdue fines
+- View all fines (paid/unpaid) and a full issue history
 
-* Name
-* USN
-* Department
-* Phone Number
+The system is protected by an admin login with session-based authentication.
 
 ---
 
-## 🔄 Book Issue & Return System
+## Tech Stack
 
-* Issue books to students
-* Return books
-* Due date tracking
-* Automatic availability update
-* Transaction handling using MySQL transactions
-* Prevent issuing unavailable books
-
-### Issue Workflow
-
-1. Student selects a book
-2. Issue record created
-3. Book availability decreases
-4. Due date assigned
-5. Return updates availability automatically
+| Layer       | Technology                        |
+|-------------|-----------------------------------|
+| Runtime     | Node.js                           |
+| Framework   | Express.js                        |
+| Templating  | EJS (Embedded JavaScript)         |
+| Database    | MySQL                             |
+| Styling     | Custom CSS (Playfair Display + DM Sans fonts) |
+| Sessions    | express-session                   |
+| Flash msgs  | connect-flash                     |
+| Body parser | body-parser                       |
 
 ---
 
-# 💰 Fine Management
+## Features
 
-* Automatic overdue fine calculation
-* Fine records stored in database
-* Paid / Unpaid status tracking
-* Mark fine as paid
-* Fine analytics
+### Authentication
+- Admin login with username and password
+- Session-based access control — all routes redirect to `/login` if not authenticated
+- Logout destroys the session
 
-### Fine Rules
+### Dashboard
+- Live counts of total books, enrolled students, currently issued books, and overdue books
+- Quick action shortcuts to issue a book, process a return, or manage books
 
-* Fine generated automatically for overdue returns
-* Fine stored permanently in database
-* Fine records linked to issue history
+### Books Management (`/books`)
+- Add new books (title, author, category, quantity)
+- Search books by title, author, or category
+- Edit book details
+- Delete books (blocked if the book is currently issued to a student)
+- Available count tracked separately from total quantity
 
----
+### Students Management (`/students`)
+- Enroll new students (name, USN, department, phone)
+- Search students by name, USN, or department
+- Edit student details
+- Delete students
+- Duplicate USN detection on insertion
 
-# 📊 Dashboard Analytics
+### Book Issuing (`/issue-book`)
+- Select a student and a book from dropdowns
+- Only books with `available > 0` are shown
+- Set issue date and due date
+- Uses a MySQL transaction to insert the issue record and decrement `available` atomically
 
-The dashboard provides:
+### Book Returns (`/return-book`)
+- Lists all currently issued (unreturned) books
+- Shows overdue status and estimated fine inline
+- Processes return: sets `return_date`, increments `available`, inserts fine record if overdue
 
-* Total Books
-* Total Students
-* Active Issued Books
-* Overdue Books
-* Fine Statistics
-* Library Analytics Charts
+### Fines (`/fines`)
+- View all fine records
+- Summary cards showing total fines, unpaid amount, and collected amount
+- Fine rate: **₹2 per overdue day**
 
-Built using:
-
-* Chart.js
-* Dynamic MySQL queries
-
----
-
-# 🕘 Issue History
-
-Complete transaction history including:
-
-* Student details
-* Book details
-* Issue date
-* Due date
-* Return date
-* Current status
-
----
-
-# 🎨 Modern UI Features
-
-* Professional RV University inspired interface
-* Responsive layout
-* Sidebar navigation
-* Dashboard cards
-* Modern tables
-* Status badges
-* Alerts and notifications
-* Analytics visualization
+### Issue History (`/history`)
+- Complete log of all book transactions (issued and returned)
+- Shows student name, USN, book title, issue date, due date, return date, and status
 
 ---
 
-# 🛠️ Tech Stack
+## Project Structure
 
-## Frontend
-
-* HTML5
-* CSS3
-* JavaScript
-* EJS
-* Bootstrap
-* Chart.js
-
-## Backend
-
-* Node.js
-* Express.js
-
-## Database
-
-* MySQL
-
-## Other Packages
-
-* mysql2
-* express-session
-* body-parser
-* connect-flash
-
----
-
-# 🗄️ Database Design
-
-## Tables Used
-
-### 1. students
-
-| Column     | Type    |
-| ---------- | ------- |
-| id         | INT     |
-| name       | VARCHAR |
-| usn        | VARCHAR |
-| department | VARCHAR |
-| phone      | VARCHAR |
-
----
-
-### 2. books
-
-| Column    | Type    |
-| --------- | ------- |
-| id        | INT     |
-| title     | VARCHAR |
-| author    | VARCHAR |
-| category  | VARCHAR |
-| quantity  | INT     |
-| available | INT     |
-
----
-
-### 3. issued_books
-
-| Column      | Type |
-| ----------- | ---- |
-| id          | INT  |
-| student_id  | INT  |
-| book_id     | INT  |
-| issue_date  | DATE |
-| due_date    | DATE |
-| return_date | DATE |
-
----
-
-### 4. fines
-
-| Column      | Type    |
-| ----------- | ------- |
-| id          | INT     |
-| issue_id    | INT     |
-| amount      | DECIMAL |
-| paid_status | VARCHAR |
-
----
-
-# 🔗 Relationships
-
-* One student → many issued books
-* One book → many issue records
-* One issue → one fine record
-
-Implemented using:
-
-* Primary Keys
-* Foreign Keys
-* Relational Mapping
-
----
-
-# ⚡ DBMS Concepts Implemented
-
-| Concept                    | Implemented |
-| -------------------------- | ----------- |
-| CRUD Operations            | ✅           |
-| Primary Keys               | ✅           |
-| Foreign Keys               | ✅           |
-| Constraints                | ✅           |
-| Transactions               | ✅           |
-| Referential Integrity      | ✅           |
-| Data Validation            | ✅           |
-| Search Queries             | ✅           |
-| Joins                      | ✅           |
-| Session Management         | ✅           |
-| Relational Database Design | ✅           |
-
----
-
-# 📂 Project Structure
-
-```bash
-library-management-system/
+```
+project-root/
+│
+├── server.js               # App entry point — Express setup, session, dashboard route
 │
 ├── db/
-│   └── db.js
-│
-├── public/
+│   └── db.js               # MySQL connection (you must create this)
 │
 ├── routes/
-│   ├── auth.js
-│   ├── books.js
-│   ├── students.js
-│   ├── issue.js
-│   ├── return.js
-│   ├── fines.js
-│   └── history.js
+│   ├── auth.js             # Login / logout
+│   ├── books.js            # CRUD for books
+│   ├── students.js         # CRUD for students
+│   ├── issue.js            # Issue book (GET form + POST submit)
+│   ├── return.js           # Return book (list + process return)
+│   ├── fines.js            # View fines
+│   └── history.js          # View issue history
 │
 ├── views/
-│   ├── dashboard.ejs
-│   ├── books.ejs
-│   ├── students.ejs
-│   ├── fines.ejs
-│   ├── history.ejs
-│   ├── issue-book.ejs
-│   ├── return-book.ejs
-│   ├── edit-book.ejs
-│   ├── edit-student.ejs
-│   ├── login.ejs
-│   ├── _sidebar.ejs
-│   └── _layout.ejs
+│   ├── _layout.ejs         # Shared CSS variables and component styles
+│   ├── _sidebar.ejs        # Shared sidebar navigation partial
+│   ├── login.ejs           # Login page
+│   ├── dashboard.ejs       # Main dashboard
+│   ├── books.ejs           # Books management
+│   ├── students.ejs        # Students management
+│   ├── issue-book.ejs      # Issue book form
+│   ├── return-book.ejs     # Return book table
+│   ├── fines.ejs           # Fines list
+│   ├── history.ejs         # Issue history
+│   ├── edit-book.ejs       # Edit a single book
+│   └── edit-student.ejs    # Edit a single student
 │
-├── server.js
-├── package.json
-└── README.md
+└── public/                 # Static assets (if any)
 ```
 
 ---
 
-# ⚠️ Requirements
+## Database Schema
 
-Before running the project, make sure the following are installed and running:
+You need a MySQL database with the following tables. Run this SQL to set up your schema:
 
-* Node.js
-* MySQL Server
-* npm
+```sql
+CREATE DATABASE rv_library;
+USE rv_library;
 
-You can use:
+-- Admin accounts
+CREATE TABLE admins (
+  id       INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL
+);
 
-* XAMPP (MySQL only)
-* MAMP
-* Native MySQL installation
+-- Insert a default admin (change password before going live)
+INSERT INTO admins (username, password) VALUES ('admin', 'admin123');
 
-> Apache or PHP is NOT required because the project uses Node.js + Express as the backend server.
+-- Books catalogue
+CREATE TABLE books (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  title     VARCHAR(255) NOT NULL,
+  author    VARCHAR(255) NOT NULL,
+  category  VARCHAR(100) NOT NULL,
+  quantity  INT NOT NULL DEFAULT 1,
+  available INT NOT NULL DEFAULT 1
+);
+
+-- Enrolled students
+CREATE TABLE students (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  name       VARCHAR(255) NOT NULL,
+  usn        VARCHAR(50)  NOT NULL UNIQUE,
+  department VARCHAR(100) NOT NULL,
+  phone      VARCHAR(20)  NOT NULL
+);
+
+-- Book issue records
+CREATE TABLE issued_books (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  student_id  INT  NOT NULL,
+  book_id     INT  NOT NULL,
+  issue_date  DATE NOT NULL,
+  due_date    DATE NOT NULL,
+  return_date DATE DEFAULT NULL,
+  FOREIGN KEY (student_id) REFERENCES students(id),
+  FOREIGN KEY (book_id)    REFERENCES books(id)
+);
+
+-- Fine records (auto-created on overdue return)
+CREATE TABLE fines (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  issue_id    INT            NOT NULL,
+  amount      DECIMAL(10, 2) NOT NULL,
+  paid_status ENUM('Paid', 'Unpaid') DEFAULT 'Unpaid',
+  FOREIGN KEY (issue_id) REFERENCES issued_books(id)
+);
+```
 
 ---
 
-# ⚙️ Installation & Setup
+## Getting Started
 
-## 1. Clone Repository
+### Prerequisites
+
+- Node.js v16 or higher
+- MySQL 8.x
+- npm
+
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/chinmay6537/LMS.git
+git clone <your-repo-url>
+cd <project-folder>
 ```
 
----
-
-## 2. Open Project
+### 2. Install dependencies
 
 ```bash
-cd LMS
+npm install express body-parser express-session connect-flash ejs mysql
 ```
 
----
-
-## 3. Install Dependencies
+Or if a `package.json` is present:
 
 ```bash
 npm install
@@ -340,112 +224,153 @@ npm install
 
 ---
 
-## 4. Configure MySQL Database
+## Environment Setup
 
-Create database:
+Create the file `db/db.js` with your MySQL connection details:
 
-```sql
-CREATE DATABASE library_management;
+```javascript
+const mysql = require('mysql');
+
+const db = mysql.createConnection({
+  host:     'localhost',
+  user:     'root',        // your MySQL username
+  password: '',            // your MySQL password
+  database: 'rv_library'
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error('Database connection failed:', err);
+    throw err;
+  }
+  console.log('MySQL connected');
+});
+
+module.exports = db;
 ```
 
-Import required tables using SQL schema.
+> **Note:** The project uses `mysql` (v2), not `mysql2`. Make sure you install the right package: `npm install mysql`
 
 ---
 
-## 5. Configure Database Connection
-
-Edit:
-
-```bash
-db/db.js
-```
-
-Update:
-
-```js
-host
-user
-password
-database
-```
-
----
-
-## 6. Run Project
-
-```bash
-npm run dev
-```
-
-or
+## Running the App
 
 ```bash
 node server.js
 ```
 
----
+The server starts on **port 5050** by default.
 
-## 7. Open Browser
+Open your browser and go to:
 
-```bash
-http://localhost:5050
+```
+http://localhost:5050/login
 ```
 
----
-
-# 📸 Suggested Screenshots
-
-Add screenshots of:
-
-* Login Page
-* Dashboard
-* Book Management
-* Student Management
-* Fine Management
-* Issue History
-* Analytics Dashboard
+Log in with the admin credentials you inserted into the `admins` table.
 
 ---
 
-# 🎯 Objective
+## Routes Reference
 
-The main objective of this project is to digitize and simplify library management operations while implementing practical DBMS concepts in a real-world application.
-
-This system helps:
-
-* Reduce manual work
-* Improve record management
-* Track books efficiently
-* Maintain proper transaction history
-* Manage overdue fines
-* Generate analytics and reports
-
----
-
-# 🧠 Learning Outcomes
-
-Through this project, the following concepts were learned and implemented:
-
-* Backend development using Node.js
-* MySQL relational database design
-* Session handling and authentication
-* RESTful routing
-* EJS templating
-* Database normalization
-* Transaction handling
-* Git & GitHub workflow
-* UI/UX design principles
+| Method | Route                    | Description                                  | Auth Required |
+|--------|--------------------------|----------------------------------------------|---------------|
+| GET    | `/login`                 | Show login page                              | No            |
+| POST   | `/login`                 | Authenticate admin                           | No            |
+| GET    | `/logout`                | Destroy session, redirect to login           | No            |
+| GET    | `/dashboard`             | Show dashboard with live stats               | Yes           |
+| GET    | `/books`                 | List all books (supports `?search=`)         | Yes           |
+| POST   | `/books/add`             | Add a new book                               | Yes           |
+| GET    | `/books/edit/:id`        | Show edit form for a book                    | Yes           |
+| POST   | `/books/update/:id`      | Save book changes                            | Yes           |
+| GET    | `/books/delete/:id`      | Delete a book (blocked if currently issued)  | Yes           |
+| GET    | `/students`              | List all students (supports `?search=`)      | Yes           |
+| POST   | `/students/add`          | Enroll a new student                         | Yes           |
+| GET    | `/students/edit/:id`     | Show edit form for a student                 | Yes           |
+| POST   | `/students/update/:id`   | Save student changes                         | Yes           |
+| GET    | `/students/delete/:id`   | Delete a student                             | Yes           |
+| GET    | `/issue-book`            | Show issue book form                         | Yes           |
+| POST   | `/issue-book`            | Issue a book to a student                    | Yes           |
+| GET    | `/return-book`           | List all currently issued books              | Yes           |
+| GET    | `/return-book/:id`       | Process a book return and calculate fine     | Yes           |
+| GET    | `/fines`                 | View all fine records                        | Yes           |
+| GET    | `/history`               | View complete issue history                  | Yes           |
 
 ---
 
-# 👨‍💻 Developed By
+## UI Theme
 
-Atharva SM 
-Chandra Sriyanth 
-Chinmay S
+The interface is themed around **RV University's visual identity**:
 
-RV University
+| Token         | Value     | Usage                        |
+|---------------|-----------|------------------------------|
+| Maroon        | `#7B1C1C` | Sidebar, buttons, headings   |
+| Gold          | `#C9A84C` | Accents, badges, highlights  |
+| Cream         | `#FDF8F0` | Page background              |
+| Body font     | DM Sans   | All body text and UI         |
+| Display font  | Playfair Display | Page titles, stat numbers |
 
-DBMS Mini Project
+**Key UI components:**
+
+- Fixed left sidebar with icon navigation and active state highlighting
+- Sticky topbar with page title and admin badge
+- Stat cards with coloured bottom accent bars on the dashboard
+- Inline add-form panels above management tables
+- Status badges: Available / Low Stock / Out of Stock for books; Returned / Issued for history
+- Overdue rows highlighted in red with estimated fine shown inline on the Return page
+- Avatar initials auto-generated from student names
 
 ---
+
+## Known Issues & Improvements
+
+The following issues exist in the current codebase and should be addressed before deploying to production:
+
+### Security
+
+**SQL Injection** — Search queries in `books.js` and `students.js` use raw string interpolation instead of parameterized queries. Any user-supplied search input is directly embedded in SQL.
+
+```javascript
+// Current (vulnerable):
+sql = `SELECT * FROM books WHERE title LIKE '%${req.query.search}%'`
+
+// Fix:
+db.query('SELECT * FROM books WHERE title LIKE ?', [`%${search}%`], ...)
+```
+
+**Plain-text passwords** — Passwords in the `admins` table are stored and compared as plain text. Use `bcrypt` to hash passwords before storing and compare hashes on login.
+
+**Missing auth guards** — `/fines` and `/history` routes do not check `req.session.admin`. Add the guard at the top of each route handler.
+
+### Logic
+
+**Book update doesn't sync `available`** — When a book's `quantity` is edited, the `available` count is not recalculated. If a librarian increases quantity from 5 to 10, `available` stays unchanged.
+
+**Return uses GET for a state-changing action** — `/return-book/:id` performs database writes (sets return date, updates availability, inserts fine) over a GET request. This should be a POST request to follow HTTP semantics and prevent accidental re-triggers.
+
+**No duplicate issue check** — A student can be issued the same book multiple times simultaneously. Add a check before inserting into `issued_books`.
+
+### Missing Files
+
+- `db/db.js` — Not included in the repository. See [Environment Setup](#environment-setup) above to create it.
+- `package.json` — Not present. Run `npm init` and install dependencies manually as described in [Getting Started](#getting-started).
+
+---
+
+## Fine Calculation
+
+Fines are calculated at the time of return in `routes/return.js`:
+
+```
+fine = max(0, days_overdue × ₹2)
+```
+
+Where `days_overdue = ceil((return_date - due_date) in days)`.
+
+A fine record is only inserted into the `fines` table if the fine amount is greater than zero.
+
+---
+
+## License
+
+This project was built for academic purposes as part of a DBMS course at RV University, Bengaluru.
