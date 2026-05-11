@@ -205,8 +205,8 @@ CREATE TABLE fines (
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
-cd <project-folder>
+git clone https://github.com/chinmay6537/LMS.git
+cd lms
 ```
 
 ### 2. Install dependencies
